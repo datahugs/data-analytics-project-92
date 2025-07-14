@@ -8,7 +8,7 @@ from customers;
 select
 concat(e.first_name,' ', e.last_name) as seller,
 count(*) as operations,
-round(sum(s.quantity * p.price),0) as income
+ceiling(sum(s.quantity * p.price),0) as income
 from sales s
 left join employees e
 on e.employee_id = s.sales_person_id
@@ -22,7 +22,7 @@ limit 10;
 средней выручки за сделку по всем продавцам, сортировка по выручке по возрастанию*/
 select
 concat(e.first_name,' ', e.last_name) as seller,
-round(avg(s.quantity * p.price),0) as average_income
+ceiling(avg(s.quantity * p.price)) as average_income
 from sales s
 left join employees e
 on e.employee_id = s.sales_person_id
