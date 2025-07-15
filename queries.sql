@@ -24,38 +24,38 @@ limit 10;
 сортировка по выручке по возрастанию*/
 select
     concat(
-        trim(e.first_name), ' ', trim(e.last_name)
+        trim(e1.first_name), ' ', trim(e1.last_name)
     ) as seller,
-    floor(avg(s.quantity * p.price)) as average_income
-from sales as s
-left join employees as e on s.sales_person_id = e.employee_id
-left join products as p on s.product_id = p.product_id
+    floor(avg(s1.quantity * p1.price)) as average_income
+from sales as s1
+left join employees as e1 on s1.sales_person_id = e1.employee_id
+left join products as p1 on s1.product_id = p1.product_id
 group by
     concat(
-        trim(e.first_name), ' ', trim(e.last_name)
+        trim(e1.first_name), ' ', trim(e1.last_name)
     )
 having
-    avg(s.quantity * p.price) <
-        (
-        select avg(s.quantity * p.price)
-        from sales as s
-        left join products as p on s.product_id = p.product_id
-        )
+    avg(s1.quantity * p1.price) <
+    (
+        select avg(s1.quantity * p1.price)
+        from sales as s1
+        left join products as p1 on s1.product_id = p1.product_id
+    )
 order by average_income asc;
 /*Запрос выводит суммарную выручку, распределённую по дням недели и селлерам*/
 select
-    concat(e.first_name, ' ', e.last_name) as seller,
-    to_char(s.sale_date, 'day') as day_of_week,
-    floor(sum(s.quantity * p.price)) as income
-from sales as s
-left join employees as e on s.sales_person_id = e.employee_id
-left join products as p on s.product_id = p.product_id
+    concat(e2.first_name, ' ', e2.last_name) as seller,
+    to_char(s2.sale_date, 'day') as day_of_week,
+    floor(sum(s2.quantity * p2.price)) as income
+from sales as s2
+left join employees as e2 on s2.sales_person_id = e2.employee_id
+left join products as p2 on s2.product_id = p2.product_id
 group by
-    to_char(s.sale_date, 'day'),
-    concat(e.first_name, ' ', e.last_name),
-    extract(isodow from s.sale_date)
+    to_char(s2.sale_date, 'day'),
+    concat(e2.first_name, ' ', e2.last_name),
+    extract(isodow from s2.sale_date)
 order by
-    extract(isodow from s.sale_date), seller asc;
+    extract(isodow from s2.sale_date), seller asc;
 /*Запрос вычисляет количество покупателей в разных возрастных
 группах: 16-25, 26-40 и 40+*/
 select
@@ -73,9 +73,9 @@ order by age_category;
 select
     to_char(sale_date, 'YYYY-MM') as selling_month,
     count(distinct customer_id) as total_customers,
-    floor(sum(s.quantity * p.price)) as income
-from sales as s
-left join products as p on s.product_id = p.product_id
+    floor(sum(s3.quantity * p3.price)) as income
+from sales as s3
+left join products as p3 on s3.product_id = p3.product_id
 group by to_char(sale_date, 'YYYY-MM')
 order by to_char(sale_date, 'YYYY-MM') asc;
 /*Запрос выводит покупателей, чья первая покупка была в ходе
@@ -83,17 +83,18 @@ order by to_char(sale_date, 'YYYY-MM') asc;
 with tab as (
     select
         *,
-        (s.quantity * p.price) as income,
-        row_number() over (partition by customer_id order by sale_date asc) as rn
-    from sales as s
-    left join products as p on s.product_id = p.product_id
+        (s4.quantity * p4.price) as income,
+        row_number() over (partition by c4.customer_id order by s4.sale_date asc) as rn
+    from sales as s4
+    left join products as p4 on s4.product_id = p4.product_id
 )
+    
 select
-    concat(c.first_name, ' ', c.last_name) as customer,
-    tab.sale_date as sale_date,
-    concat(e.first_name, ' ', e.last_name) as seller
+    concat(c2.first_name, ' ', c2.last_name) as customer,
+    tab.sale_date,
+    concat(e4.first_name, ' ', e4.last_name) as seller
 from tab
-left join employees as e on tab.sales_person_id = e.employee_id
-left join customers as c on tab.customer_id = c.customer_id
-where rn = 1 and income = 0
+left join employees as e4 on tab.sales_person_id = e4.employee_id
+left join customers as c2 on tab.customer_id = c2.customer_id
+where tab.rn = 1 and tab.income = 0
 order by tab.customer_id asc;
