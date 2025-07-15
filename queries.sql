@@ -1,7 +1,6 @@
 /*Запрос вычисляет количество уникальных покупателей,
 записанных в базе данных магазина*/
-select
-    count(*) as customers_count
+select count(*) as customers_count
 from customers;
 /*Запрос вычисляет топ-10 продавцов, их суммарную выручку
 и количество проведенных сделок, сортировка по убыванию выручки*/
@@ -30,7 +29,7 @@ select
     floor(avg(s.quantity * p.price)) as average_income
 from sales as s
 left join employees as e on s.sales_person_id = e.employee_id
-left join products as p1 on s.product_id = p.product_id
+left join products as p on s.product_id = p.product_id
 group by
     concat(
         trim(e.first_name), ' ', trim(e.last_name)
@@ -95,6 +94,6 @@ select
     concat(e.first_name, ' ', e.last_name) as seller
 from tab
 left join employees as e on tab.sales_person_id = e.employee_id
-left join customers as c on c.customer_id = tab.customer_id
+left join customers as c on tab.customer_id = c.customer_id
 where rn = 1 and income = 0
 order by tab.customer_id asc;
