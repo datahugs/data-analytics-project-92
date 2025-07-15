@@ -92,11 +92,18 @@ with tab as (
 )
 
 select
-    concat(c2.first_name, ' ', c2.last_name) as customer,
-    tab.sale_date,
-    concat(e5.first_name, ' ', e5.last_name) as seller
-from tab
-left join employees as e5 on tab.sales_person_id = e5.employee_id
-left join customers as c2 on tab.customer_id = c2.customer_id
-where tab.rn = 1 and tab.income = 0
+    customer,
+    sale_date,
+    seller
+from (
+    select
+        concat(c2.first_name, ' ', c2.last_name) as customer,
+        tab.sale_date,
+        concat(e5.first_name, ' ', e5.last_name) as seller,
+        tab.customer_id
+    from tab
+    left join employees as e5 on tab.sales_person_id = e5.employee_id
+    left join customers as c2 on tab.customer_id = c2.customer_id
+    where tab.rn = 1 and tab.income = 0
+) as sub
 order by tab.customer_id asc;
