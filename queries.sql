@@ -7,7 +7,7 @@ from customers;
 и количество проведенных сделок, сортировка по убыванию выручки*/
 select
     concat(
-      trim(e.first_name), ' ', trim(e.last_name)
+        trim(e.first_name), ' ', trim(e.last_name)
     ) as seller,
     count(*) as operations,
     floor(sum(s.quantity * p.price)) as income
@@ -16,32 +16,32 @@ left join employees as e on s.sales_person_id = e.employee_id
 left join products as p on s.product_id = p.product_id
 group by
  concat(
-  trim(e.first_name), ' ', trim(e.last_name)
+     trim(e.first_name), ' ', trim(e.last_name)
  )
-order by
- sum(s.quantity * p.price) desc
+order by sum(s.quantity * p.price) desc
 limit 10;
 /*Запрос выводит продавцов, чья средняя выручка за сделку
 меньше средней выручки за сделку по всем продавцам,
 сортировка по выручке по возрастанию*/
 select
     concat(
-     trim(e.first_name), ' ', trim(e.last_name)
+        trim(e.first_name), ' ', trim(e.last_name)
     ) as seller,
     floor(avg(s.quantity * p.price)) as average_income
 from sales as s
 left join employees as e on s.sales_person_id = e.employee_id
 left join products as p on s.product_id = p.product_id
 group by
- concat(
-  trim(e.first_name), ' ', trim(e.last_name)
- )
+    concat(
+        trim(e.first_name), ' ', trim(e.last_name)
+    )
 having avg(s.quantity * p.price) <
- (select
-      avg(s.quantity * p.price)
-  from sales as s
-  left join products as p on s.product_id = p.product_id
- )
+    (
+    select
+        avg(s.quantity * p.price)
+    from sales as s
+    left join products as p on s.product_id = p.product_id
+    )
 order by average_income asc;
 /*Запрос выводит суммарную выручку, распределённую по дням недели и селлерам*/
 select
@@ -52,17 +52,17 @@ from sales as s
 left join employees as e on s.sales_person_id = e.employee_id
 left join products as p on s.product_id = p.product_id
 group by
- to_char(s.sale_date, 'day'),
- concat(e.first_name, ' ', e.last_name),
- extract(isodow from s.sale_date)
+    to_char(s.sale_date, 'day'),
+    concat(e.first_name, ' ', e.last_name),
+    extract(isodow from s.sale_date)
 order by
- extract(isodow from s.sale_date), seller asc;
+    extract(isodow from s.sale_date), seller asc;
 /*Запрос вычисляет количество покупателей в разных возрастных группах: 16-25, 26-40 и 40+*/
 select
     case
-     when age between 16 and 25 then '16-25'
-     when age between 26 and 40 then '26-40'
-     else '40+'
+        when age between 16 and 25 then '16-25'
+        when age between 26 and 40 then '26-40'
+        else '40+'
     end as age_category,
     count(*) as age_count
 from customers
@@ -85,7 +85,7 @@ with tab as (
         row_number() over (partition by customer_id order by sale_date asc) as rn
     from sales as s
     left join products as p on s.product_id = p.product_id
-    )
+)
 select
     concat(c.first_name, ' ', c.last_name) as customer,
     tab.sale_date as sale_date,
