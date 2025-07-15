@@ -35,8 +35,7 @@ group by
         trim(e1.first_name), ' ', trim(e1.last_name)
     )
 having
-    avg(s1.quantity * p1.price) <
-    (
+    avg(s1.quantity * p1.price) < (
         select avg(s2.quantity * p2.price)
         from sales as s2
         left join products as p2 on s2.product_id = p2.product_id
