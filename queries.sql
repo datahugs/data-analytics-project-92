@@ -86,7 +86,8 @@ with tab as (
         (s5.quantity * p5.price) as income,
         row_number() over (
             partition by s5.customer_id
-            order by s5.sale_date asc) as rn
+            order by s5.sale_date asc
+        ) as rn
     from sales as s5
     left join products as p5 on s5.product_id = p5.product_id
 )
