@@ -72,7 +72,7 @@ order by age_category;
 принесли магазину за каждый месяц*/
 select
     to_char(s4.sale_date, 'YYYY-MM') as selling_month,
-    count(distinct customer_id) as total_customers,
+    count(distinct s4.customer_id) as total_customers,
     floor(sum(s4.quantity * p4.price)) as income
 from sales as s4
 left join products as p4 on s4.product_id = p4.product_id
@@ -84,7 +84,9 @@ with tab as (
     select
         s5.*,
         (s5.quantity * p5.price) as income,
-        row_number() over (partition by c2.customer_id order by s5.sale_date asc) as rn
+        row_number() over (
+            partition by s5.customer_id
+            order by s5.sale_date asc) as rn
     from sales as s5
     left join products as p5 on s5.product_id = p5.product_id
 )
