@@ -15,9 +15,9 @@ from sales as s
 left join employees as e on s.sales_person_id = e.employee_id
 left join products as p on s.product_id = p.product_id
 group by
- concat(
-     trim(e.first_name), ' ', trim(e.last_name)
- )
+    concat(
+        trim(e.first_name), ' ', trim(e.last_name)
+    )
 order by sum(s.quantity * p.price) desc
 limit 10;
 /*Запрос выводит продавцов, чья средняя выручка за сделку
@@ -30,18 +30,18 @@ select
     floor(avg(s.quantity * p.price)) as average_income
 from sales as s
 left join employees as e on s.sales_person_id = e.employee_id
-left join products as p on s.product_id = p.product_id
+left join products as p1 on s.product_id = p.product_id
 group by
     concat(
         trim(e.first_name), ' ', trim(e.last_name)
     )
-having avg(s.quantity * p.price) <
-    (
-    select
-        avg(s.quantity * p.price)
-    from sales as s
-    left join products as p on s.product_id = p.product_id
-    )
+having
+    avg(s.quantity * p.price) <
+        (
+        select avg(s.quantity * p.price)
+        from sales as s
+        left join products as p on s.product_id = p.product_id
+        )
 order by average_income asc;
 /*Запрос выводит суммарную выручку, распределённую по дням недели и селлерам*/
 select
@@ -57,7 +57,8 @@ group by
     extract(isodow from s.sale_date)
 order by
     extract(isodow from s.sale_date), seller asc;
-/*Запрос вычисляет количество покупателей в разных возрастных группах: 16-25, 26-40 и 40+*/
+/*Запрос вычисляет количество покупателей в разных возрастных
+группах: 16-25, 26-40 и 40+*/
 select
     case
         when age between 16 and 25 then '16-25'
@@ -68,7 +69,8 @@ select
 from customers
 group by age_category
 order by age_category;
-/*Запрос считает, какую выручку и сколько уникальных клиентов принесли магазину за каждый месяц*/
+/*Запрос считает, какую выручку и сколько уникальных клиентов
+принесли магазину за каждый месяц*/
 select
     to_char(sale_date, 'YYYY-MM') as selling_month,
     count(distinct customer_id) as total_customers,
@@ -77,7 +79,8 @@ from sales as s
 left join products as p on s.product_id = p.product_id
 group by to_char(sale_date, 'YYYY-MM')
 order by to_char(sale_date, 'YYYY-MM') asc;
-/*Запрос выводит покупателей, чья первая покупка была в ходе проведения акций, сортировка по id покупателя*/
+/*Запрос выводит покупателей, чья первая покупка была в ходе
+проведения акций, сортировка по id покупателя*/
 with tab as (
     select
         *,
