@@ -98,9 +98,9 @@ select
 from (
     select
         tab.customer_id,
-        concat(c2.first_name, ' ', c2.last_name) as customer,
         tab.sale_date,
-        concat(e5.first_name, ' ', e5.last_name) as seller        
+        concat(c2.first_name, ' ', c2.last_name) as customer,
+        concat(e5.first_name, ' ', e5.last_name) as seller
     from tab
     left join employees as e5 on tab.sales_person_id = e5.employee_id
     left join customers as c2 on tab.customer_id = c2.customer_id
